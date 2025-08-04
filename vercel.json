@@ -30,8 +30,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "VITE_REACT_APP_API_URL": "@tonebridge-api-url"
-  }
+  ]
 } 
