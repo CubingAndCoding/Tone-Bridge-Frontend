@@ -8,7 +8,7 @@ import { AppError, ApiResponse, UserSettings, TranscriptionSegment, DailyStorage
 // API Utilities
 export class ApiUtils {
   private static baseUrl = import.meta.env.VITE_REACT_APP_API_URL || 'https://localhost:5000';
-  private static timeout = 30000;
+  private static timeout = 120000; // 2 minutes for audio processing
   private static maxRetries = 3;
   private static retryDelay = 1000;
 
@@ -94,6 +94,7 @@ export class ApiUtils {
         
         // Don't retry on certain errors
         if (lastError.message.includes('abort') || 
+            lastError.message.includes('signal is aborted') ||
             lastError.message.includes('Network error') ||
             lastError.message.includes('API endpoint not found')) {
           break;
@@ -115,8 +116,8 @@ export class ApiUtils {
     if (lastError) {
       if (lastError.message.includes('Failed to fetch')) {
         errorMessage = 'Cannot connect to server. Please check your internet connection and try again.';
-      } else if (lastError.message.includes('abort')) {
-        errorMessage = 'Request timed out. Please try again.';
+      } else if (lastError.message.includes('abort') || lastError.message.includes('signal is aborted')) {
+        errorMessage = 'Request timed out. The server is taking longer than expected to process your audio. Please try again.';
       } else if (lastError.message.includes('Network error')) {
         errorMessage = 'Network connection issue. Please check your connection and try again.';
       } else {

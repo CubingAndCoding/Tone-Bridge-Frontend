@@ -446,29 +446,126 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                      onThemeChange={(themeId) => updateSettings({ theme: themeId })}
                    />
                    
-                   {/* Dark Mode Toggle */}
-                   <div style={{ marginTop: '1rem' }}>
-                     <IonItem style={{ '--background': 'transparent' }}>
-                       <IonLabel>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                           <IonIcon icon={moonOutline} style={{ fontSize: '1.1rem' }} />
-                           <span>Dark Mode</span>
+                   {/* Enhanced Dark Mode Toggle */}
+                   <div style={{ marginTop: '1.5rem' }}>
+                     <h3 style={{ 
+                       marginBottom: '1rem', 
+                       fontSize: '1.1rem',
+                       fontWeight: '600',
+                       color: 'var(--ion-text-color)',
+                       display: 'flex',
+                       alignItems: 'center',
+                       gap: '0.5rem'
+                     }}>
+                       <IonIcon icon={moonOutline} style={{ fontSize: '1.1rem' }} />
+                       Appearance
+                     </h3>
+                     
+                     {/* Modern Toggle with Description */}
+                     <div style={{
+                       background: 'var(--ion-item-background)',
+                       borderRadius: '12px',
+                       padding: '1rem',
+                       border: '1px solid var(--ion-border-color)',
+                       marginBottom: '0.5rem'
+                     }}>
+                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                         <div style={{ flex: 1 }}>
+                           <div style={{ 
+                             display: 'flex', 
+                             alignItems: 'center', 
+                             gap: '0.75rem',
+                             marginBottom: '0.25rem'
+                           }}>
+                             <IonIcon 
+                               icon={document.documentElement.classList.contains('dark-mode') ? moonOutline : sunnyOutline} 
+                               style={{ 
+                                 fontSize: '1.2rem',
+                                 color: document.documentElement.classList.contains('dark-mode') ? 'var(--ion-color-primary)' : 'var(--ion-color-warning)'
+                               }} 
+                             />
+                             <span style={{ 
+                               fontWeight: '500',
+                               color: 'var(--ion-text-color)'
+                             }}>
+                               {document.documentElement.classList.contains('dark-mode') ? 'Dark Mode' : 'Light Mode'}
+                             </span>
+                           </div>
+                           <div style={{ 
+                             fontSize: '0.85rem',
+                             color: 'var(--ion-color-medium)',
+                             marginLeft: '1.95rem'
+                           }}>
+                             {document.documentElement.classList.contains('dark-mode') 
+                               ? 'Easier on the eyes in low light' 
+                               : 'Clean and bright interface'
+                             }
+                           </div>
                          </div>
-                       </IonLabel>
-                       <IonToggle
-                         checked={document.documentElement.classList.contains('dark-mode')}
-                         onIonChange={(e) => {
-                           if (e.detail.checked) {
-                             document.documentElement.classList.add('dark-mode');
-                           } else {
-                             document.documentElement.classList.remove('dark-mode');
-                           }
-                           // Re-apply current theme to ensure proper variables
-                           ThemeUtils.applyTheme(settings.theme);
-                         }}
-                         slot="end"
+                         <IonToggle
+                           checked={document.documentElement.classList.contains('dark-mode')}
+                           onIonChange={(e) => {
+                             if (e.detail.checked) {
+                               document.documentElement.classList.add('dark-mode');
+                             } else {
+                               document.documentElement.classList.remove('dark-mode');
+                             }
+                             // Re-apply current theme to ensure proper variables
+                             ThemeUtils.applyTheme(settings.theme);
+                           }}
+                           style={{
+                             '--handle-width': '20px',
+                             '--handle-height': '20px',
+                             '--handle-box-shadow': '0 2px 4px rgba(0,0,0,0.2)',
+                             '--background': 'var(--ion-color-medium)',
+                             '--background-checked': 'var(--ion-color-primary)',
+                             '--handle-background': 'var(--ion-color-light)',
+                             '--handle-background-checked': 'var(--ion-color-light)',
+                           }}
+                         />
+                       </div>
+                     </div>
+                     
+                     {/* Quick Preview */}
+                     <div style={{
+                       display: 'flex',
+                       gap: '0.5rem',
+                       marginTop: '0.5rem',
+                       justifyContent: 'center'
+                     }}>
+                       <div style={{
+                         width: '20px',
+                         height: '20px',
+                         borderRadius: '50%',
+                         background: 'var(--ion-color-light)',
+                         border: '2px solid var(--ion-color-medium)',
+                         cursor: 'pointer',
+                         transition: 'all 0.2s ease',
+                         opacity: document.documentElement.classList.contains('dark-mode') ? 0.3 : 1
+                       }}
+                       onClick={() => {
+                         document.documentElement.classList.remove('dark-mode');
+                         ThemeUtils.applyTheme(settings.theme);
+                       }}
+                       title="Light Mode"
                        />
-                     </IonItem>
+                       <div style={{
+                         width: '20px',
+                         height: '20px',
+                         borderRadius: '50%',
+                         background: 'var(--ion-color-dark)',
+                         border: '2px solid var(--ion-color-medium)',
+                         cursor: 'pointer',
+                         transition: 'all 0.2s ease',
+                         opacity: document.documentElement.classList.contains('dark-mode') ? 1 : 0.3
+                       }}
+                       onClick={() => {
+                         document.documentElement.classList.add('dark-mode');
+                         ThemeUtils.applyTheme(settings.theme);
+                       }}
+                       title="Dark Mode"
+                       />
+                     </div>
                    </div>
                  </div>
 

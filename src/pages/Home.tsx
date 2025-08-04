@@ -20,8 +20,6 @@ import {
   mic,
   heartOutline,
   trashOutline,
-  sunnyOutline,
-  moonOutline,
   volumeHighOutline,
   closeOutline,
 } from 'ionicons/icons';
@@ -128,23 +126,10 @@ const Home: React.FC = () => {
     }
   }, [transcriptionSegments]);
 
-  // Toggle light/dark mode
-  const toggleColorScheme = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    
-    // Update classes
-    document.documentElement.classList.remove('light-mode', 'dark-mode');
-    document.documentElement.classList.add(newDarkMode ? 'dark-mode' : 'light-mode');
-    
-    // Re-apply current theme to ensure proper variables
-    ThemeUtils.applyTheme(settings.theme);
-  };
-
   // Handle recording completion
   const handleRecordingComplete = async (recording: AudioRecording) => {
     setIsProcessing(true);
-    setIsRecording(false);
+    setIsRecording(false); // Always stop recording first
 
     try {
       console.log('Processing recording:', {
@@ -153,6 +138,9 @@ const Home: React.FC = () => {
         format: recording.format,
         timestamp: recording.timestamp
       });
+
+      // Show processing message
+      showToast('Processing your audio... This may take a moment.', 'info');
 
       // Debug: Test audio data first
       await DebugUtils.testAudioData(recording.blob, recording.format);
@@ -208,8 +196,8 @@ const Home: React.FC = () => {
           errorMessage = 'Cannot connect to server. Please check your internet connection and try again.';
         } else if (error.message.includes('Network error')) {
           errorMessage = 'Network connection issue. Please check your connection and try again.';
-        } else if (error.message.includes('Request timed out')) {
-          errorMessage = 'Request timed out. Please try again.';
+        } else if (error.message.includes('Request timed out') || error.message.includes('signal is aborted')) {
+          errorMessage = 'Request timed out. The server is taking longer than expected to process your audio. Please try again.';
         } else if (error.message.includes('Audio file too large')) {
           errorMessage = 'Recording too long. Please record a shorter message.';
         } else {
@@ -221,6 +209,7 @@ const Home: React.FC = () => {
       AnalyticsUtils.trackError(ErrorUtils.createError('TRANSCRIPTION_FAILED', errorMessage));
     } finally {
       setIsProcessing(false);
+      setIsRecording(false); // Ensure recording is stopped even on error
     }
   };
 
@@ -411,18 +400,7 @@ const Home: React.FC = () => {
               <span style={{ color: 'var(--ion-text-color)' }}>ToneBridge</span>
             </div>
           </IonTitle>
-          <IonButton
-            fill="clear"
-            slot="end"
-            onClick={toggleColorScheme}
-            style={{ 
-              marginRight: '0.5rem',
-              color: 'var(--ion-text-color)',
-              '--color': 'var(--ion-text-color)'
-            }}
-          >
-            <IonIcon icon={isDarkMode ? moonOutline : sunnyOutline} style={{ color: 'var(--ion-text-color)' }} />
-          </IonButton>
+
           <IonButton
             fill="clear"
             slot="end"
